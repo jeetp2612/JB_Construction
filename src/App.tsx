@@ -1,16 +1,59 @@
 import { 
   Building2, Briefcase, Construction, Mail, Phone, MapPin, 
   ArrowRight, Menu, X, CheckCircle, FileText, Hammer, 
-  HardHat, Award, Users, Clock 
+  HardHat, Award, Users, Clock, ExternalLink 
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+
+// --- PROJECTS DATA ---
+const projectsData = [
+  { 
+    name: 'Industrial Road Development', 
+    type: 'Mehsana GIDC',
+    image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80',
+    desc: 'A comprehensive road construction project where we managed the entire lifecycle from digital planning to the final coat of asphalt. Utilizing AutoCAD for precise grading, we supplied 1,500+ tons of our premium Pakur Stone to create a high-density foundation capable of supporting 24/7 heavy industrial traffic.'
+  },
+  { 
+    name: 'Highway Surface Strengthening', 
+    type: 'SH-41 (Mehsana-Unjha)',
+    image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80',
+    desc: 'Focusing on durability and safety, our team executed a major surfacing project on State Highway 41. We provided industrial-grade Natural Bitumen (VG-30) and specialized Labour Work to ensure a seamless, heat-resistant finish designed to withstand the intense Gujarat climate.'
+  },
+  { 
+    name: 'Heavy-Duty Foundation Work', 
+    type: 'Modhera Road',
+    image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80',
+    desc: 'This structural project highlighted our commitment to technical accuracy. We provided high-tensile Mild Steel Bright Bars and expert site supervision to pour a perfectly leveled RCC foundation for a large-scale storage facility, ensuring a structure that is built to last.'
+  },
+  { 
+    name: 'Bulk Material Logistics', 
+    type: 'Kheralu-Visnagar',
+    image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80',
+    desc: 'A large-scale logistics project where J B Construction served as the primary material partner. We maintained a consistent, zero-delay supply chain of Crushed Pakur Stone and Cement Clinkers, keeping the regional infrastructure timeline on track despite challenging weather conditions.'
+  },
+  { 
+    name: 'Precision Industrial Flooring', 
+    type: 'Becharaji Zone',
+    image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80',
+    desc: 'Specialized "House Satisfaction Work" for a manufacturing unit requiring high-tolerance flooring. By combining our high-grade raw materials with skilled manual finishing, we delivered a dust-free, high-impact resistant floor that meets the strict standards of modern industrial operations.'
+  },
+  { 
+    name: 'Township Infrastructure', 
+    type: 'Ahmedabad Highway',
+    image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80',
+    desc: 'A residential infrastructure project focused on quality and aesthetics. Our team handled the AutoCAD layout and internal bitumen road work, providing a clean and professional finish that transformed the local township\'s accessibility and overall value.'
+  },
+];
 
 function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  // --- NEW STATES FOR PROJECTS MODAL ---
+  const [selectedProject, setSelectedProject] = useState(null);
+
   // --- NEW STATES FOR FORM ---
-  const [formData, setFormData] = useState({ name: '', email: '', details: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', service: '', details: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -19,26 +62,40 @@ function App() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate an API call (sending the email info)
+    // Prepare mailto link formatting
+    const subject = encodeURIComponent(`New Inquiry from ${formData.name} - ${formData.service}`);
+    const body = encodeURIComponent(
+      `Name: ${formData.name}\nEmail: ${formData.email}\nService Requested: ${formData.service}\n\nProject Details:\n${formData.details}`
+    );
+
+    // Open user's email client
+    window.location.href = `mailto:director@jbconstruction.com?subject=${subject}&body=${body}`;
+
+    // Show success UI briefly
     setTimeout(() => {
-      console.log("Form Data Collected:", formData);
       setIsSubmitting(false);
       setIsSubmitted(true);
       
       // Reset form after 5 seconds to allow new messages
       setTimeout(() => setIsSubmitted(false), 5000);
-      setFormData({ name: '', email: '', details: '' });
-    }, 1500);
+      setFormData({ name: '', email: '', service: '', details: '' });
+    }, 1000);
   };
   
   // Handle header background change on scroll
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    // Prevent scrolling when modal is open
+    if (selectedProject) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = 'unset';
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedProject]);
 
-  const scrollToSection = (id: string) => {
+  const scrollToSection = (id) => {
     const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: 'smooth' });
     setMobileMenuOpen(false);
@@ -52,14 +109,11 @@ function App() {
     { name: 'Contact', id: 'contact' },
   ];
 
-
-  
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-orange-100 selection:text-orange-600">
       
-      
       {/* HEADER */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         scrolled ? 'bg-white/90 backdrop-blur-md shadow-lg py-3' : 'bg-transparent py-5'
       }`}>
         <nav className="max-w-7xl mx-auto px-6 lg:px-8 flex justify-between items-center">
@@ -238,8 +292,8 @@ function App() {
         </div>
       </section>
 
-      {/* PROJECTS GRID */}
-      <section id="projects" className="py-24 bg-white">
+      {/* PROJECTS GRID WITH MODAL FUNCTIONALITY */}
+      <section id="projects" className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-orange-500 font-black uppercase tracking-[0.3em] mb-4">Portfolio</h2>
@@ -247,24 +301,26 @@ function App() {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { name: 'Mehsana GIDC Roadway', type: 'Industrial' },
-              { name: 'SH-41 Highway Strengthening', type: 'Infrastructure' },
-              { name: 'Heavy-Duty Foundations', type: 'Civil Work' },
-              { name: 'Bulk Material Logistics', type: 'Supply' },
-              { name: 'Industrial Flooring', type: 'Specialized' },
-              { name: 'Township Infrastructure', type: 'Residential' },
-            ].map((proj, i) => (
-              <div key={i} className="group relative overflow-hidden rounded-3xl h-80 bg-slate-200">
+            {projectsData.map((proj, i) => (
+              <div key={i} className="group relative overflow-hidden rounded-3xl h-80 bg-slate-200 cursor-pointer shadow-md" onClick={() => setSelectedProject(proj)}>
                 <img 
-                  src={`https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80`} 
+                  src={proj.image} 
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-90" 
                   alt={proj.name}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80" />
-                <div className="absolute bottom-0 left-0 p-8">
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-90 transition-opacity duration-300" />
+                
+                {/* Default Text */}
+                <div className="absolute bottom-0 left-0 p-8 w-full transition-transform duration-300 group-hover:-translate-y-4">
                   <span className="text-orange-500 text-xs font-black uppercase tracking-widest">{proj.type}</span>
                   <h4 className="text-white text-xl font-bold mt-1">{proj.name}</h4>
+                </div>
+
+                {/* Hover Overlay Button */}
+                <div className="absolute inset-0 bg-slate-900/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-sm">
+                  <span className="bg-orange-500 text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    View Details <ArrowRight className="h-4 w-4" />
+                  </span>
                 </div>
               </div>
             ))}
@@ -272,10 +328,49 @@ function App() {
         </div>
       </section>
 
-      {/* CONTACT / FOOTER (Updated with Logic) */}
+      {/* PROJECT DETAILS MODAL */}
+      {selectedProject && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onClick={() => setSelectedProject(null)}></div>
+          <div className="relative bg-white rounded-3xl w-full max-w-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setSelectedProject(null)}
+              className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black text-white p-2 rounded-full transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <div className="h-64 sm:h-80 w-full relative">
+              <img src={selectedProject.image} alt={selectedProject.name} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6">
+                <span className="bg-orange-500 text-white text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">{selectedProject.type}</span>
+                <h3 className="text-3xl font-black text-white mt-3">{selectedProject.name}</h3>
+              </div>
+            </div>
+            <div className="p-8 sm:p-10">
+              <h4 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <FileText className="text-orange-500" /> Project Description
+              </h4>
+              <p className="text-slate-600 text-lg leading-relaxed mb-8">
+                {selectedProject.desc}
+              </p>
+              <button 
+                onClick={() => { setSelectedProject(null); scrollToSection('contact'); }}
+                className="w-full sm:w-auto bg-slate-900 hover:bg-orange-500 text-white px-8 py-4 rounded-xl font-bold transition-colors"
+              >
+                Inquire About Similar Projects
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CONTACT / FOOTER SECTION */}
       <footer id="contact" className="bg-slate-900 text-white pt-24 pb-12">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-20 mb-20">
+          <div className="grid lg:grid-cols-2 gap-16 mb-20">
+            
+            {/* Left Column: Info & Map */}
             <div>
               <div className="flex items-center gap-3 mb-8">
                 <div className="bg-orange-500 p-2 rounded-lg">
@@ -286,12 +381,13 @@ function App() {
               <p className="text-slate-400 text-lg mb-10 max-w-md italic">
                 "Quality is not an act, it is a habit. We build with integrity and technical precision."
               </p>
-              <div className="space-y-6">
+              
+              <div className="space-y-6 mb-10">
                 <div className="flex gap-4">
                   <div className="bg-white/5 p-3 rounded-xl"><Mail className="text-orange-500" /></div>
                   <div>
                     <div className="text-sm font-bold text-slate-500 uppercase">Email Us</div>
-                    <div className="text-lg font-medium">director.jbconstruction@gmail.com</div>
+                    <div className="text-lg font-medium">director@jbconstruction.com</div>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -305,42 +401,67 @@ function App() {
                   <div className="bg-white/5 p-3 rounded-xl"><MapPin className="text-orange-500" /></div>
                   <div>
                     <div className="text-sm font-bold text-slate-500 uppercase">Head Office</div>
-                    <div className="text-slate-300">Maruti Enclave, Bypass Highway, Mehsana, Gujarat</div>
+                    <div className="text-slate-300"> FIRST FLOOR, F-11, MARUTI ENCLAVE, BYPASS HIGHWAY, PANCHOT, MEHSANA, GUJARAT – 384205</div>
                   </div>
                 </div>
               </div>
+
+              {/* INTEGRATED GOOGLE MAP (Matches coordinates from user image) */}
+              <div className="w-full h-64 rounded-2xl overflow-hidden shadow-lg border border-white/10 relative group">
+                <iframe 
+                  title="J B Construction Location"
+                  src="https://maps.google.com/maps?q=23%C2%B036'42.3%22N%2072%C2%B020'25.9%22E&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 0 }} 
+                  allowFullScreen="" 
+                  loading="lazy" 
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="red hover:grayscale-0 transition-all duration-500"
+                ></iframe>
+                <a 
+                  href="https://maps.google.com/?q=J.B.Construction+Mehsana"
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="absolute bottom-4 right-4 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg flex items-center gap-2 transition-colors"
+                >
+                  Get Directions <ExternalLink className="h-4 w-4" />
+                </a>
+              </div>
             </div>
 
-            {/* UPDATED FORM CONTAINER */}
-            <div className="bg-white p-10 rounded-3xl min-h-[450px] flex flex-col justify-center transition-all duration-500">
+            {/* Right Column: Contact Form */}
+            <div className="bg-white p-10 rounded-3xl min-h-[500px] flex flex-col justify-center transition-all duration-500 shadow-2xl">
               {isSubmitted ? (
                 // SUCCESS STATE
                 <div className="text-center animate-in zoom-in duration-500">
                   <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                     <CheckCircle className="text-green-600 h-10 w-10" />
                   </div>
-                  <h4 className="text-slate-900 text-3xl font-black mb-2">Message Sent!</h4>
-                  <p className="text-slate-500 font-bold">Thank you for reaching out. <br/> Our team will contact you shortly.</p>
+                  <h4 className="text-slate-900 text-3xl font-black mb-2">Opening Email...</h4>
+                  <p className="text-slate-500 font-bold">Your default email client has been opened to message <br/> <span className="text-orange-500">director@jbconstruction.com</span>.</p>
                   <button 
                     onClick={() => setIsSubmitted(false)}
-                    className="mt-8 text-orange-500 font-black text-sm uppercase tracking-widest hover:underline"
+                    className="mt-8 text-slate-400 font-black text-sm uppercase tracking-widest hover:text-orange-500 transition-colors"
                   >
-                    Send another message
+                    Go Back
                   </button>
                 </div>
               ) : (
                 // FORM STATE
                 <>
-                  <h4 className="text-slate-900 text-2xl font-black mb-8">Send a Message</h4>
+                  <h4 className="text-slate-900 text-3xl font-black mb-2">Let's Build Together.</h4>
+                  <p className="text-slate-500 mb-8 font-medium">Fill out the form to instantly draft an email to our director.</p>
+                  
                   <form className="space-y-4" onSubmit={handleSubmit}>
                     <div className="grid md:grid-cols-2 gap-4">
                       <input 
                         required
                         type="text" 
-                        placeholder="Full Name" 
+                        placeholder="Your Full Name" 
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        className="w-full px-5 py-4 bg-slate-100 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all" 
+                        className="w-full px-5 py-4 bg-slate-100 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all font-medium border-transparent border-2 focus:border-orange-500" 
                       />
                       <input 
                         required
@@ -348,25 +469,45 @@ function App() {
                         placeholder="Email Address" 
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        className="w-full px-5 py-4 bg-slate-100 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all" 
+                        className="w-full px-5 py-4 bg-slate-100 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all font-medium border-transparent border-2 focus:border-orange-500" 
                       />
                     </div>
+                    
+                    {/* NEW SERVICE SELECTION DROPDOWN */}
+                    <div className="relative">
+                      <select 
+                        required
+                        value={formData.service}
+                        onChange={(e) => setFormData({...formData, service: e.target.value})}
+                        className="w-full px-5 py-4 bg-slate-100 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all font-medium appearance-none border-transparent border-2 focus:border-orange-500"
+                      >
+                        <option value="" disabled>Select a Service Needed...</option>
+                        <option value="Material Supply">Material Supply (Pakur Stone, Bitumen, etc.)</option>
+                        <option value="Road Construction">Road Construction & Pavement</option>
+                        <option value="RCC Foundation Work">RCC Foundation & Earthwork</option>
+                        <option value="Technical Drafting / BIM">Technical Drafting & BIM Support</option>
+                        <option value="General Inquiry">General Civil Contract Inquiry</option>
+                      </select>
+                    </div>
+
                     <textarea 
                       required
                       rows={4} 
-                      placeholder="Project Details" 
+                      placeholder="Project Details / Message" 
                       value={formData.details}
                       onChange={(e) => setFormData({...formData, details: e.target.value})}
-                      className="w-full px-5 py-4 bg-slate-100 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                      className="w-full px-5 py-4 bg-slate-100 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all font-medium resize-none border-transparent border-2 focus:border-orange-500"
                     ></textarea>
+                    
                     <button 
+                      type="submit"
                       disabled={isSubmitting}
                       className={`w-full bg-orange-500 hover:bg-orange-600 text-white font-black py-4 rounded-xl transition-all shadow-xl shadow-orange-500/20 flex items-center justify-center gap-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                     >
                       {isSubmitting ? (
                         <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       ) : (
-                        'SEND INQUIRY'
+                        <>SEND DIRECT EMAIL <ArrowRight className="h-5 w-5"/></>
                       )}
                     </button>
                   </form>
