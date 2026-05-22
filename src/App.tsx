@@ -209,7 +209,7 @@ function App() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
               { label: 'Years Experience', val: '7+', icon: Clock },
-              { label: 'Projects Done', val: '150+', icon: CheckCircle },
+              { label: 'Projects Done', val: '20+', icon: CheckCircle },
               { label: 'Active Sites', val: '12', icon: HardHat },
               { label: 'Expert Engineers', val: '25+', icon: Users },
             ].map((stat, i) => (
