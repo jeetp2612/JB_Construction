@@ -218,7 +218,7 @@ function App() {
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img 
   src={frontPageImg} 
-  className="w-full h-full object-cover mix-blend-overlay opacity-50 animate-kenburns"
+  className="w-full h-full object-cover mix-blend-overlay opacity-100 animate-kenburns"
   alt="J.B. Construction Active Site" 
 />
         </div>
@@ -413,7 +413,7 @@ function App() {
         </div>
       </div>
     </div>
-  );
+  );  
 
   const renderServices = () => (
     <div className="animate-in fade-in duration-500 pt-32 pb-24 bg-slate-100 min-h-screen">
