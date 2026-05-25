@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import logo from './assets/images/logo.jpeg';
+// Add these three new imports:
+import frontPageImg from './assets/images/front_page.jpeg';
+import autocadImg from './assets/images/1_autocad.jpeg';
+import truckImg from './assets/images/truck_photo.jpeg';
+import officeImg from './assets/images/aboutus.jpeg'
 import { 
   Building2, Briefcase, Construction, Mail, Phone, MapPin, 
   ArrowRight, Menu, X, CheckCircle, FileText, Hammer, 
@@ -212,10 +217,10 @@ function App() {
       <section className="relative h-[90vh] flex items-center overflow-hidden bg-blue-950">
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img 
-            src="https://images.unsplash.com/photo-1541888086925-081ce4fb1758?w=1920&q=80" 
-            className="w-full h-full object-cover mix-blend-overlay opacity-50 animate-kenburns"
-            alt="J.B. Construction Indian Worksite" 
-          />
+  src={frontPageImg} 
+  className="w-full h-full object-cover mix-blend-overlay opacity-50 animate-kenburns"
+  alt="J.B. Construction Active Site" 
+/>
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-950/80 to-transparent z-0" />
 
@@ -273,6 +278,38 @@ function App() {
             <p className="text-slate-600 text-lg">We are a completely integrated civil contracting firm. Unlike traditional contractors, we bridge the gap between heavy, on-site physical execution and highly precise digital planning (BIM/CAD), ensuring that every project is delivered safely, on time, and completely free of municipal compliance issues.</p>
           </div>
 
+          {/* NEW VISUAL FEATURE SECTION START */}
+          <div className="grid md:grid-cols-2 gap-8 mb-16">
+            <div className="rounded-3xl overflow-hidden shadow-2xl relative group">
+              <img 
+                src={truckImg} 
+                alt="Heavy Site Execution" 
+                className="w-full h-72 md:h-96 object-cover group-hover:scale-105 transition-transform duration-700" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-blue-950 via-blue-950/40 to-transparent flex items-end p-8 md:p-10">
+                <div>
+                  <span className="text-stone-400 font-black tracking-widest uppercase text-sm mb-2 block">Physical Execution</span>
+                  <h3 className="text-white text-2xl md:text-3xl font-black">Heavy Site Operations</h3>
+                </div>
+              </div>
+            </div>
+            
+            <div className="rounded-3xl overflow-hidden shadow-2xl relative group">
+              <img 
+                src={autocadImg} 
+                alt="Digital BIM Planning" 
+                className="w-full h-72 md:h-96 object-cover group-hover:scale-105 transition-transform duration-700" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-blue-950 via-blue-950/40 to-transparent flex items-end p-8 md:p-10">
+                <div>
+                  <span className="text-stone-400 font-black tracking-widest uppercase text-sm mb-2 block">Pre-Construction</span>
+                  <h3 className="text-white text-2xl md:text-3xl font-black">Digital BIM & CAD Planning</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* NEW VISUAL FEATURE SECTION END */}
+
           <div className="grid md:grid-cols-4 gap-6 mb-16">
             {[
               { title: 'Civil Drafting', desc: 'AutoCAD 2D plans & Revit 3D BIM coordination.', icon: Monitor },
@@ -303,25 +340,34 @@ function App() {
   );
 
   const renderAbout = () => (
-    <div className="animate-in fade-in duration-500 pt-32 pb-24 bg-slate-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+    <div 
+      className="animate-in fade-in duration-500 pt-32 pb-24 min-h-screen relative bg-cover bg-center bg-fixed" 
+      style={{ backgroundImage: `url(${officeImg})`}}
+    >
+      {/* ADDED: A subtle light overlay so your dark blue text remains highly readable over the image */}
+      <div className="absolute inset-0 bg-slate-100/70 z-0 pointer-events-none" />
+
+      {/* Added relative z-10 so the content sits above the overlay */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
         
-        {/* Intro Section - Redesigned to look great without a photo */}
+        {/* Intro Section */}
         <div className="max-w-4xl mx-auto mb-24">
           <div className="text-center mb-10">
             <h2 className="text-3xl md:text-5xl font-black text-blue-950 mb-4 flex items-center justify-center gap-4">
               <Building2 className="h-10 w-10 text-stone-500" /> About J.B. Construction
             </h2>
-            <h3 className="text-xl md:text-2xl text-stone-600 leading-tight font-bold">
+            <h3 className="text-xl md:text-2xl text-stone-700 leading-tight font-bold">
               Bridging the Gap Between Field Operations and Digital Engineering.
             </h3>
           </div>
           
-          <div className="bg-white p-10 rounded-3xl shadow-md border border-slate-200">
-            <p className="text-lg text-slate-700 mb-6 leading-relaxed">
+          {/* CHANGED: Solid bg-white to frosted glass (bg-white/70 backdrop-blur-md) */}
+          <div className="bg-white/70 backdrop-blur-md p-10 rounded-3xl shadow-xl border border-white/50">
+            <p className="text-lg text-slate-800 mb-6 leading-relaxed font-medium">
               Established in 2017 with its office in Mehsana, Gujarat (GSTIN: 24BBCPP4390Q1Z3), J.B. Construction is a premier proprietorship civil contracting firm. Led by experienced Civil Engineer Jairambhai B. Prajapati, we specialize in delivering end-to-end civil construction solutions.
             </p>
-            <p className="text-lg text-slate-700 leading-relaxed border-l-4 border-stone-500 pl-6 bg-slate-50 p-6 rounded-r-xl">
+            {/* Made the inner quote box slightly transparent too */}
+            <p className="text-lg text-slate-800 leading-relaxed border-l-4 border-stone-500 pl-6 bg-white/40 p-6 rounded-r-xl font-medium">
               We understand that successful physical construction relies heavily on precise pre-construction planning. Therefore, we integrate practical site execution with sophisticated Building Information Modeling (BIM) and digital design capabilities to streamline project coordination and ensure strict compliance with municipal codes.
             </p>
           </div>
@@ -329,25 +375,27 @@ function App() {
 
         {/* Vision, Mission, Quality Grid */}
         <div className="grid md:grid-cols-3 gap-8 mb-24">
-          <div className="bg-white p-10 rounded-3xl shadow-lg border-t-4 border-blue-900">
+          {/* CHANGED: Applied glass effect to all three boxes */}
+          <div className="bg-white/70 backdrop-blur-md p-10 rounded-3xl shadow-xl border border-white/50 border-t-4 border-t-blue-900 hover:bg-white/90 transition-all duration-300">
             <Target className="h-12 w-12 text-stone-500 mb-6" />
             <h4 className="text-2xl font-black text-blue-950 mb-4">Our Vision</h4>
-            <p className="text-slate-600 leading-relaxed">To be the most trusted and technologically advanced civil contracting partner in Gujarat, recognized for bridging traditional hard work with modern engineering precision.</p>
+            <p className="text-slate-700 font-medium leading-relaxed">To be the most trusted and technologically advanced civil contracting partner in Gujarat, recognized for bridging traditional hard work with modern engineering precision.</p>
           </div>
-          <div className="bg-white p-10 rounded-3xl shadow-lg border-t-4 border-stone-500">
+          <div className="bg-white/70 backdrop-blur-md p-10 rounded-3xl shadow-xl border border-white/50 border-t-4 border-t-stone-500 hover:bg-white/90 transition-all duration-300">
             <Compass className="h-12 w-12 text-blue-900 mb-6" />
             <h4 className="text-2xl font-black text-blue-950 mb-4">Our Mission</h4>
-            <p className="text-slate-600 leading-relaxed">To deliver every infrastructure project safely, on time, and within budget, by utilizing premium materials, skilled labor, and highly accurate digital drafting technologies.</p>
+            <p className="text-slate-700 font-medium leading-relaxed">To deliver every infrastructure project safely, on time, and within budget, by utilizing premium materials, skilled labor, and highly accurate digital drafting technologies.</p>
           </div>
-          <div className="bg-white p-10 rounded-3xl shadow-lg border-t-4 border-blue-900">
+          <div className="bg-white/70 backdrop-blur-md p-10 rounded-3xl shadow-xl border border-white/50 border-t-4 border-t-blue-900 hover:bg-white/90 transition-all duration-300">
             <ShieldCheck className="h-12 w-12 text-stone-500 mb-6" />
             <h4 className="text-2xl font-black text-blue-950 mb-4">Quality Policy</h4>
-            <p className="text-slate-600 leading-relaxed">We maintain a 100% commitment to QA/QC compliance. From rigorous material testing to digital clash detection in Revit, quality is embedded in every phase of our workflow.</p>
+            <p className="text-slate-700 font-medium leading-relaxed">We maintain a 100% commitment to QA/QC compliance. From rigorous material testing to digital clash detection in Revit, quality is embedded in every phase of our workflow.</p>
           </div>
         </div>
 
         {/* Technology and Remote Work Section */}
-        <div className="bg-blue-950 text-white p-12 md:p-16 rounded-3xl shadow-2xl relative overflow-hidden">
+        {/* CHANGED: Converted solid blue to semi-transparent blue glass */}
+        <div className="bg-blue-950/80 backdrop-blur-md border border-blue-800/50 text-white p-12 md:p-16 rounded-3xl shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 opacity-10 pointer-events-none translate-x-1/4 -translate-y-1/4">
             <Cloud className="h-96 w-96" />
           </div>
